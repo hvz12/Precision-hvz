@@ -1,0 +1,1246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Precision HVZ - Painel de Modo de Jogo Pro</title>
+  
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800;900&family=Rajdhani:wght@500;600;700&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Rajdhani', sans-serif;
+      background-color: #030508;
+      color: #e2e8f0;
+      overflow-x: hidden;
+      user-select: none;
+      margin: 0;
+    }
+
+    .font-orbitron {
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    /* CSS Custom Properties for Dynamic Neon Themes */
+    :root {
+      --primary-color: #00f0ff;
+      --primary-glow: rgba(0, 240, 255, 0.4);
+      --primary-border: rgba(0, 240, 255, 0.35);
+      --primary-bg-active: rgba(0, 240, 255, 0.12);
+      --primary-bg-hover: rgba(0, 240, 255, 0.06);
+    }
+
+    .theme-cyan {
+      --primary-color: #00f0ff;
+      --primary-glow: rgba(0, 240, 255, 0.4);
+      --primary-border: rgba(0, 240, 255, 0.35);
+      --primary-bg-active: rgba(0, 240, 255, 0.12);
+      --primary-bg-hover: rgba(0, 240, 255, 0.06);
+    }
+    .theme-purple {
+      --primary-color: #b055ff;
+      --primary-glow: rgba(176, 85, 255, 0.4);
+      --primary-border: rgba(176, 85, 255, 0.35);
+      --primary-bg-active: rgba(176, 85, 255, 0.12);
+      --primary-bg-hover: rgba(176, 85, 255, 0.06);
+    }
+    .theme-red {
+      --primary-color: #ff2a5f;
+      --primary-glow: rgba(255, 42, 95, 0.4);
+      --primary-border: rgba(255, 42, 95, 0.35);
+      --primary-bg-active: rgba(255, 42, 95, 0.12);
+      --primary-bg-hover: rgba(255, 42, 95, 0.06);
+    }
+    .theme-green {
+      --primary-color: #10b981;
+      --primary-glow: rgba(16, 185, 129, 0.4);
+      --primary-border: rgba(16, 185, 129, 0.35);
+      --primary-bg-active: rgba(16, 185, 129, 0.12);
+      --primary-bg-hover: rgba(16, 185, 129, 0.06);
+    }
+    .theme-gold {
+      --primary-color: #f59e0b;
+      --primary-glow: rgba(245, 158, 11, 0.4);
+      --primary-border: rgba(245, 158, 11, 0.35);
+      --primary-bg-active: rgba(245, 158, 11, 0.12);
+      --primary-bg-hover: rgba(245, 158, 11, 0.06);
+    }
+
+    #particles-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Cyber Grid Overlay */
+    .bg-grid-overlay {
+      background-size: 30px 30px;
+      background-image: 
+        linear-gradient(to right, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+    }
+
+    /* Glassmorphism Styles */
+    .glass-card {
+      background: rgba(8, 11, 18, 0.85);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--primary-border);
+      box-shadow: 0 10px 35px rgba(0, 0, 0, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.02);
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .glass-inner {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-inner:hover {
+      border-color: var(--primary-border);
+      background: var(--primary-bg-hover);
+    }
+
+    .option-card.active {
+      background: var(--primary-bg-active);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 18px var(--primary-glow);
+    }
+
+    .option-card.active .icon-box {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 12px var(--primary-glow);
+      color: var(--primary-color);
+    }
+
+    /* Custom Switch Toggle */
+    .custom-switch {
+      width: 46px;
+      height: 24px;
+      border-radius: 9999px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      transition: all 0.3s ease;
+      flex-shrink: 0;
+    }
+
+    .custom-switch::after {
+      content: '';
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .opt-check:checked + .custom-switch {
+      background: var(--primary-color);
+      border-color: var(--primary-color);
+      box-shadow: 0 0 12px var(--primary-glow);
+    }
+
+    .opt-check:checked + .custom-switch::after {
+      transform: translateX(22px);
+      background: #030508;
+    }
+
+    .theme-text {
+      color: var(--primary-color);
+      text-shadow: 0 0 8px var(--primary-glow);
+    }
+
+    .theme-bg {
+      background-color: var(--primary-color);
+    }
+
+    .theme-border {
+      border-color: var(--primary-color);
+    }
+
+    .theme-shadow {
+      box-shadow: 0 0 20px var(--primary-glow);
+    }
+
+    /* Range Sliders */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      height: 6px;
+      width: 100%;
+    }
+
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 18px;
+      width: 18px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      box-shadow: 0 0 10px var(--primary-glow);
+      cursor: pointer;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #080d14;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1e293b;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary-color);
+    }
+
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.8; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.05); }
+    }
+
+    .pulse-target {
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="theme-cyan min-h-screen flex flex-col items-center justify-center p-3 md:p-6 relative bg-grid-overlay">
+
+  <!-- Background Interactive Particles -->
+  <canvas id="particles-canvas"></canvas>
+
+  <!-- Notification Toast Container -->
+  <div id="toast-container" class="fixed top-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
+  <!-- TELA DE AUTENTICAÇÃO / LOGIN POR CHAVE -->
+  <div id="key-login-screen" class="w-full max-w-md glass-card rounded-2xl p-6 relative z-20 my-auto text-center">
+    <div class="w-16 h-16 rounded-2xl flex items-center justify-center glass-inner theme-shadow mx-auto mb-4">
+      <i class="fa-solid fa-key text-3xl theme-text"></i>
+    </div>
+    <h2 class="text-2xl font-extrabold font-orbitron text-white tracking-wider mb-1">
+      PRECISION <span class="theme-text">HVZ</span>
+    </h2>
+    <p class="text-xs text-slate-400 font-medium mb-6">INSIRA SUA CHAVE DE ACESSO PARA LIBERAR O PAINEL</p>
+
+    <div class="space-y-4">
+      <div>
+        <input id="input-access-key" type="text" placeholder="HVZ-XXXX-XXXX-XXXX" class="w-full px-4 py-3 rounded-xl glass-inner text-center font-orbitron text-sm tracking-widest text-white uppercase focus:outline-none focus:border-cyan-400 border border-white/10 placeholder-slate-600 transition-colors">
+      </div>
+
+      <button onclick="validateKeyInput()" class="w-full py-3 rounded-xl theme-bg text-slate-950 font-orbitron font-bold text-sm tracking-wider uppercase theme-shadow hover:brightness-110 transition-all flex items-center justify-center gap-2 cursor-pointer">
+        <i class="fa-solid fa-unlock-keyhole"></i> ACESSAR PAINEL
+      </button>
+
+      <div class="flex items-center justify-between text-xs text-slate-400 pt-2 border-t border-white/10">
+        <button onclick="openAdminModal()" class="hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer">
+          <i class="fa-solid fa-user-shield theme-text"></i> Painel Admin
+        </button>
+        <button onclick="openModal('suporte')" class="hover:text-white transition-colors cursor-pointer">
+          Obter Chave
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN PAINEL CONTAINER (INICIALMENTE OCULTO) -->
+  <main id="main-panel" class="w-full max-w-5xl glass-card rounded-2xl p-5 md:p-8 relative z-10 my-4 hidden">
+    
+    <!-- Header with Branding, License Info, Sound Toggle, and Color Themes -->
+    <header class="flex flex-col lg:flex-row items-center justify-between gap-4 pb-6 border-b border-white/10">
+      
+      <!-- Brand Logo & Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-xl flex items-center justify-center glass-inner theme-shadow relative group cursor-pointer" onclick="playCyberSound('click')">
+          <i class="fa-solid fa-crosshairs text-2xl theme-text group-hover:rotate-45 transition-transform duration-300"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-extrabold font-orbitron tracking-wider text-white flex items-center gap-2 drop-shadow-md">
+            PRECISION <span class="theme-text">HVZ</span>
+            <span class="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded bg-white/10 text-slate-300 border border-white/10">PRO v3.8</span>
+          </h1>
+          <p class="text-xs text-slate-400 font-medium tracking-wider">SISTEMA DE OTIMIZAÇÃO E PERFORMANCE DE MIRA</p>
+        </div>
+      </div>
+
+      <!-- Active License Banner & Header Controls -->
+      <div class="flex flex-wrap items-center justify-center gap-3">
+        
+        <!-- Active Key Info Badge + Copy Button -->
+        <div class="glass-inner px-3 py-1.5 rounded-full flex items-center gap-2 text-xs">
+          <i class="fa-solid fa-shield-halved text-emerald-400"></i>
+          <span class="text-slate-400">Chave:</span>
+          <span id="badge-active-key" class="font-orbitron font-bold theme-text uppercase">---</span>
+          <button onclick="copyActiveKey()" class="text-slate-400 hover:text-white ml-1 cursor-pointer" title="Copiar Chave">
+            <i class="fa-solid fa-copy"></i>
+          </button>
+          <span id="badge-time-left" class="text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">---</span>
+          <button onclick="logoutKey()" class="text-slate-500 hover:text-rose-400 ml-1 cursor-pointer" title="Sair / Trocar Chave">
+            <i class="fa-solid fa-right-from-bracket"></i>
+          </button>
+        </div>
+
+        <!-- Audio FX Toggle -->
+        <button id="btn-audio" onclick="toggleAudio()" class="glass-inner px-3 py-2 rounded-full flex items-center gap-2 text-xs font-bold text-slate-300 hover:text-white transition-colors cursor-pointer" title="Efeitos Sonoros">
+          <i id="audio-icon" class="fa-solid fa-volume-high theme-text"></i>
+          <span id="audio-text" class="hidden sm:inline">SOM: ON</span>
+        </button>
+
+        <!-- Theme Pickers -->
+        <div class="flex items-center gap-2 glass-inner px-3 py-1.5 rounded-full">
+          <span class="text-[11px] text-slate-400 font-bold uppercase tracking-wider mr-1 hidden sm:inline">Cor:</span>
+          
+          <button onclick="changeTheme('theme-cyan')" class="w-5 h-5 rounded-full bg-cyan-400 border border-slate-900 hover:scale-125 transition-transform cursor-pointer" title="Cyan Neon"></button>
+          <button onclick="changeTheme('theme-purple')" class="w-5 h-5 rounded-full bg-purple-500 border border-slate-900 hover:scale-125 transition-transform cursor-pointer" title="Cyber Purple"></button>
+          <button onclick="changeTheme('theme-red')" class="w-5 h-5 rounded-full bg-rose-500 border border-slate-900 hover:scale-125 transition-transform cursor-pointer" title="Crimson Red"></button>
+          <button onclick="changeTheme('theme-green')" class="w-5 h-5 rounded-full bg-emerald-500 border border-slate-900 hover:scale-125 transition-transform cursor-pointer" title="Matrix Green"></button>
+          <button onclick="changeTheme('theme-gold')" class="w-5 h-5 rounded-full bg-amber-500 border border-slate-900 hover:scale-125 transition-transform cursor-pointer" title="Gold Sunset"></button>
+        </div>
+
+      </div>
+    </header>
+
+    <!-- General Dashboard Status Bar -->
+    <section class="my-5 p-4 rounded-xl glass-inner flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Status Badge -->
+      <div class="flex items-center gap-3">
+        <div class="relative flex items-center justify-center">
+          <div id="status-indicator" class="w-4 h-4 rounded-full bg-slate-500 transition-colors"></div>
+          <div id="status-ping" class="absolute w-6 h-6 rounded-full bg-slate-500/30 animate-ping"></div>
+        </div>
+        <div>
+          <span class="text-[11px] text-slate-400 font-bold block uppercase tracking-wider">Estado do Otimizador:</span>
+          <span id="status-text" class="text-base md:text-lg font-orbitron font-bold text-slate-300">DESATIVADO</span>
+        </div>
+      </div>
+
+      <!-- Metrics Display -->
+      <div class="flex items-center gap-4 md:gap-8 text-sm">
+        <div class="text-center">
+          <span class="text-slate-400 text-xs block font-medium">FPS Estimado</span>
+          <span id="metric-fps" class="font-orbitron text-lg font-extrabold text-white">60</span>
+        </div>
+        <div class="text-center">
+          <span class="text-slate-400 text-xs block font-medium">Latência Input</span>
+          <span id="metric-ping" class="font-orbitron text-lg font-extrabold text-white">45 ms</span>
+        </div>
+        <div class="text-center">
+          <span class="text-slate-400 text-xs block font-medium">Limpeza RAM</span>
+          <span id="metric-ram" class="font-orbitron text-lg font-extrabold text-white">0%</span>
+        </div>
+      </div>
+
+      <!-- Master Control Buttons -->
+      <div class="flex items-center gap-2 w-full sm:w-auto">
+        <button id="btn-master" onclick="toggleMasterMode()" class="flex-1 sm:flex-none px-5 py-2.5 rounded-lg glass-inner text-white font-orbitron font-bold text-xs md:text-sm tracking-wider hover:bg-white/10 transition-all border border-white/20 cursor-pointer">
+          ATIVAR TUDO
+        </button>
+        <button onclick="runBenchmark()" class="px-4 py-2.5 rounded-lg glass-inner text-amber-400 font-orbitron font-bold text-xs md:text-sm tracking-wider hover:bg-amber-400/10 transition-all border border-amber-400/30 flex items-center gap-1.5 cursor-pointer" title="Testar Performance">
+          <i class="fa-solid fa-gauge-high"></i> TESTE
+        </button>
+      </div>
+
+    </section>
+
+    <!-- Main Modules Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 my-5">
+      
+      <!-- Option 1: Precision Response 1ms -->
+      <div class="option-card p-4 rounded-xl glass-inner flex items-center justify-between transition-all cursor-pointer" id="card-precision-response" onclick="toggleCardCheck(this)">
+        <div class="flex items-start gap-3">
+          <div class="icon-box p-2.5 rounded-lg glass-inner text-slate-400 mt-0.5">
+            <i class="fa-solid fa-bolt text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white font-orbitron text-sm drop-shadow">Precision Response 1ms</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Reduz o atraso de entrada e desativa a aceleração do ponteiro.</p>
+          </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer" onclick="event.stopPropagation()">
+          <input type="checkbox" id="chk-precision-response" class="sr-only opt-check" onchange="updateOptions()">
+          <div class="custom-switch"></div>
+        </label>
+      </div>
+
+      <!-- Option 2 -->
+      <div class="option-card p-4 rounded-xl glass-inner flex items-center justify-between transition-all cursor-pointer" onclick="toggleCardCheck(this)">
+        <div class="flex items-start gap-3">
+          <div class="icon-box p-2.5 rounded-lg glass-inner text-slate-400 mt-0.5">
+            <i class="fa-solid fa-gauge-high text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white font-orbitron text-sm drop-shadow">FPS Boost & Lock</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Estabiliza taxas de quadros eliminando travamentos súbitos.</p>
+          </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer" onclick="event.stopPropagation()">
+          <input type="checkbox" class="sr-only opt-check" onchange="updateOptions()">
+          <div class="custom-switch"></div>
+        </label>
+      </div>
+
+      <!-- Option 3 -->
+      <div class="option-card p-4 rounded-xl glass-inner flex items-center justify-between transition-all cursor-pointer" onclick="toggleCardCheck(this)">
+        <div class="flex items-start gap-3">
+          <div class="icon-box p-2.5 rounded-lg glass-inner text-slate-400 mt-0.5">
+            <i class="fa-solid fa-bullseye text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white font-orbitron text-sm drop-shadow">Fix Recoil Alignment</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Ajusta a resposta tátil para movimentos contínuos de mira.</p>
+          </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer" onclick="event.stopPropagation()">
+          <input type="checkbox" class="sr-only opt-check" onchange="updateOptions()">
+          <div class="custom-switch"></div>
+        </label>
+      </div>
+
+      <!-- Option 4 -->
+      <div class="option-card p-4 rounded-xl glass-inner flex items-center justify-between transition-all cursor-pointer" onclick="toggleCardCheck(this)">
+        <div class="flex items-start gap-3">
+          <div class="icon-box p-2.5 rounded-lg glass-inner text-slate-400 mt-0.5">
+            <i class="fa-solid fa-wifi text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white font-orbitron text-sm drop-shadow">Anti-Lag Network Buffer</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Otimiza a fila de pacotes UDP/TCP para diminuir variações de ping.</p>
+          </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer" onclick="event.stopPropagation()">
+          <input type="checkbox" class="sr-only opt-check" onchange="updateOptions()">
+          <div class="custom-switch"></div>
+        </label>
+      </div>
+
+      <!-- Option 5 -->
+      <div class="option-card p-4 rounded-xl glass-inner flex items-center justify-between transition-all cursor-pointer" onclick="toggleCardCheck(this)">
+        <div class="flex items-start gap-3">
+          <div class="icon-box p-2.5 rounded-lg glass-inner text-slate-400 mt-0.5">
+            <i class="fa-solid fa-microchip text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white font-orbitron text-sm drop-shadow">Ultra RAM Cleaner</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Prioriza alocação de memória cache para processos do jogo.</p>
+          </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer" onclick="event.stopPropagation()">
+          <input type="checkbox" class="sr-only opt-check" onchange="updateOptions()">
+          <div class="custom-switch"></div>
+        </label>
+      </div>
+
+      <!-- Option 6 -->
+      <div class="option-card p-4 rounded-xl glass-inner flex items-center justify-between transition-all cursor-pointer" onclick="toggleCardCheck(this)">
+        <div class="flex items-start gap-3">
+          <div class="icon-box p-2.5 rounded-lg glass-inner text-slate-400 mt-0.5">
+            <i class="fa-solid fa-sliders text-lg"></i>
+          </div>
+          <div>
+            <h3 class="font-bold text-white font-orbitron text-sm drop-shadow">DPI Curve Balance</h3>
+            <p class="text-xs text-slate-400 mt-0.5">Suaviza curvas de aceleração gráfica em resoluções altas.</p>
+          </div>
+        </div>
+        <label class="relative inline-flex items-center cursor-pointer" onclick="event.stopPropagation()">
+          <input type="checkbox" class="sr-only opt-check" onchange="updateOptions()">
+          <div class="custom-switch"></div>
+        </label>
+      </div>
+
+    </div>
+
+    <!-- Fine Tuning & Target Reaction Test Panel -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 my-5">
+      
+      <!-- Fine Tuning Sliders -->
+      <div class="glass-inner p-4 rounded-xl flex flex-col justify-between">
+        <h3 class="font-orbitron font-bold text-sm text-white flex items-center gap-2 mb-3">
+          <i class="fa-solid fa-sliders theme-text"></i> AJUSTE FINO DE SENSIBILIDADE
+        </h3>
+
+        <div class="space-y-3">
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span class="text-slate-400">Escala DPI Virtual:</span>
+              <span id="dpi-val" class="theme-text font-orbitron">800 DPI</span>
+            </div>
+            <input type="range" id="dpi-slider" min="400" max="3200" step="100" value="800" class="w-full cursor-pointer" oninput="updateFineTuning()">
+          </div>
+
+          <div>
+            <div class="flex justify-between text-xs font-bold mb-1">
+              <span class="text-slate-400">Taxa de Atualização (Hz):</span>
+              <span id="hz-val" class="theme-text font-orbitron">120 Hz</span>
+            </div>
+            <input type="range" id="hz-slider" min="60" max="240" step="30" value="120" class="w-full cursor-pointer" oninput="updateFineTuning()">
+          </div>
+        </div>
+
+        <div class="mt-4 pt-3 border-t border-white/10 flex items-center justify-between text-xs text-slate-400">
+          <span>Aprimorar Precisão do Ponteiro: <strong id="pointer-precision-status" class="text-rose-400 font-orbitron">ATIVADO (PADRÃO)</strong></span>
+          <button onclick="resetSliders()" class="hover:text-white underline cursor-pointer">Restaurar Padrão</button>
+        </div>
+      </div>
+
+      <!-- Aim Response Test Mini-Game -->
+      <div class="glass-inner p-4 rounded-xl flex flex-col items-center justify-between relative overflow-hidden min-h-[160px]">
+        <div class="w-full flex items-center justify-between mb-2">
+          <h3 class="font-orbitron font-bold text-sm text-white flex items-center gap-2">
+            <i class="fa-solid fa-bullseye theme-text"></i> TESTE DE REAÇÃO DE MIRA
+          </h3>
+          <span id="reaction-score" class="text-xs font-bold font-orbitron text-slate-300">Score: 0ms</span>
+        </div>
+
+        <!-- Target Canvas Container -->
+        <div id="target-box" class="w-full h-28 bg-black/40 rounded-lg border border-white/10 relative cursor-crosshair flex items-center justify-center overflow-hidden">
+          <div id="target-circle" class="absolute w-8 h-8 rounded-full border-2 border-white flex items-center justify-center pulse-target shadow-lg transition-all cursor-pointer" style="top: 35%; left: 45%;" onclick="clickTarget(event)">
+            <div class="w-2 h-2 rounded-full theme-bg"></div>
+          </div>
+          <p id="target-hint" class="text-[11px] text-slate-500 pointer-events-none absolute bottom-1">Clique no alvo neon continuamente!</p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-6 pt-4 border-t border-white/10 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-400 gap-3">
+      <p>Precision HVZ v3.8 Pro - Painel Transparente Gamer High Performance</p>
+      <div class="flex gap-4">
+        <button onclick="openModal('suporte')" class="hover:text-white transition-colors cursor-pointer">Suporte</button>
+        <button onclick="openModal('termos')" class="hover:text-white transition-colors cursor-pointer">Termos & Privacidade</button>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Modal Component for Benchmark / Support / Admin Key Generator -->
+  <div id="custom-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md hidden opacity-0 transition-opacity duration-300">
+    <div class="glass-card w-full max-w-lg p-6 rounded-2xl relative border-cyan-500/40 shadow-2xl m-4 max-h-[90vh] overflow-y-auto">
+      <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white text-lg z-10 cursor-pointer">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div id="modal-content">
+        <!-- Dynamic Content -->
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* ===================================================
+        0. KEY SYSTEM & ADMIN CONTROLLER
+    =================================================== */
+    const DEFAULT_ADMIN_PASS = "admin123";
+    let isAdminLoggedIn = false;
+
+    const initialKeys = [
+      { key: "HVZ-PRO-2026-DEMO", durationHours: 720, createdAt: Date.now(), isUnused: true },
+      { key: "HVZ-VIP-TEST-KEY", durationHours: 24, createdAt: Date.now(), isUnused: true },
+      { key: "HVZ-PERMANENT-99", durationHours: 999999, createdAt: Date.now(), isUnused: true }
+    ];
+
+    function getStoredKeys() {
+      const stored = localStorage.getItem('hvz_keys');
+      if (!stored) {
+        localStorage.setItem('hvz_keys', JSON.stringify(initialKeys));
+        return initialKeys;
+      }
+      return JSON.parse(stored);
+    }
+
+    function saveKeys(keysArray) {
+      localStorage.setItem('hvz_keys', JSON.stringify(keysArray));
+    }
+
+    function generateRandomKey() {
+      const segment = () => Math.random().toString(36).substring(2, 6).toUpperCase();
+      return `HVZ-${segment()}-${segment()}-${segment()}`;
+    }
+
+    function validateKeyInput() {
+      const input = document.getElementById('input-access-key').value.trim().toUpperCase();
+      if (!input) {
+        showToast("Digite uma chave de acesso!");
+        return;
+      }
+
+      const result = verifyKey(input);
+
+      if (result.valid) {
+        localStorage.setItem('hvz_active_key', JSON.stringify({
+          key: input,
+          expiresAt: result.expiresAt
+        }));
+
+        playCyberSound('toggle-on');
+        showToast("Chave ativada com sucesso!");
+        unlockPanel(input, result.expiresAt);
+      } else {
+        playCyberSound('click');
+        showToast(result.reason || "Chave inválida ou expirada!");
+      }
+    }
+
+    function verifyKey(keyString) {
+      const keys = getStoredKeys();
+      const keyObj = keys.find(k => k.key === keyString);
+
+      if (!keyObj) {
+        return { valid: false, reason: "Chave não encontrada!" };
+      }
+
+      if (!keyObj.activatedAt) {
+        keyObj.activatedAt = Date.now();
+        keyObj.expiresAt = Date.now() + (keyObj.durationHours * 60 * 60 * 1000);
+        saveKeys(keys);
+      }
+
+      if (Date.now() > keyObj.expiresAt) {
+        return { valid: false, reason: "Esta chave já expirou!" };
+      }
+
+      return { valid: true, expiresAt: keyObj.expiresAt };
+    }
+
+    function checkActiveSession() {
+      const activeSession = localStorage.getItem('hvz_active_key');
+      if (activeSession) {
+        try {
+          const { key, expiresAt } = JSON.parse(activeSession);
+          if (Date.now() < expiresAt) {
+            unlockPanel(key, expiresAt);
+            return;
+          } else {
+            localStorage.removeItem('hvz_active_key');
+          }
+        } catch(e) {
+          localStorage.removeItem('hvz_active_key');
+        }
+      }
+      showLoginScreen();
+    }
+
+    function unlockPanel(key, expiresAt) {
+      document.getElementById('key-login-screen').classList.add('hidden');
+      document.getElementById('main-panel').classList.remove('hidden');
+
+      document.getElementById('badge-active-key').innerText = key;
+      updateKeyTimeBadge(expiresAt);
+      
+      resetTargetTimer();
+    }
+
+    function updateKeyTimeBadge(expiresAt) {
+      const badge = document.getElementById('badge-time-left');
+      const update = () => {
+        const diff = expiresAt - Date.now();
+        if (diff <= 0) {
+          badge.innerText = "Expirada";
+          logoutKey();
+          return;
+        }
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+
+        if (hours > 1000) {
+          badge.innerText = "Ilimitada";
+        } else if (hours > 0) {
+          badge.innerText = `${hours}h ${minutes}m`;
+        } else {
+          badge.innerText = `${minutes}m`;
+        }
+      };
+
+      update();
+      setInterval(update, 60000);
+    }
+
+    function copyActiveKey() {
+      const activeKey = document.getElementById('badge-active-key').innerText;
+      if (activeKey && activeKey !== '---') {
+        document.execCommand ? (() => {
+          const aux = document.createElement("input");
+          aux.setAttribute("value", activeKey);
+          document.body.appendChild(aux);
+          aux.select();
+          document.execCommand("copy");
+          document.body.removeChild(aux);
+        })() : navigator.clipboard.writeText(activeKey);
+        
+        playCyberSound('click');
+        showToast("Chave copiada para a área de transferência!");
+      }
+    }
+
+    function copySpecificKey(keyString) {
+      document.execCommand ? (() => {
+        const aux = document.createElement("input");
+        aux.setAttribute("value", keyString);
+        document.body.appendChild(aux);
+        aux.select();
+        document.execCommand("copy");
+        document.body.removeChild(aux);
+      })() : navigator.clipboard.writeText(keyString);
+      
+      playCyberSound('click');
+      showToast(`Chave ${keyString} copiada!`);
+    }
+
+    function logoutKey() {
+      localStorage.removeItem('hvz_active_key');
+      playCyberSound('click');
+      showToast("Sessão encerrada!");
+      showLoginScreen();
+    }
+
+    function showLoginScreen() {
+      document.getElementById('main-panel').classList.add('hidden');
+      document.getElementById('key-login-screen').classList.remove('hidden');
+    }
+
+    /* Admin Modal Functionality */
+    function openAdminModal() {
+      playCyberSound('click');
+      if (!isAdminLoggedIn) {
+        renderAdminLoginView();
+      } else {
+        renderAdminPanel();
+      }
+      openModal();
+    }
+
+    function renderAdminLoginView() {
+      const content = document.getElementById('modal-content');
+      content.innerHTML = `
+        <div class="text-center py-2">
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center glass-inner theme-shadow mx-auto mb-3">
+            <i class="fa-solid fa-user-gear text-2xl theme-text"></i>
+          </div>
+          <h2 class="text-xl font-orbitron font-bold text-white mb-1">PAINEL ADMINISTRATIVO</h2>
+          <p class="text-xs text-slate-400 mb-4">Insira a senha de administrador para gerar chaves de acesso.</p>
+
+          <div class="space-y-3 max-w-xs mx-auto">
+            <input id="admin-pass-input" type="password" placeholder="Senha do Admin" class="w-full px-4 py-2.5 rounded-lg glass-inner text-center font-orbitron text-xs text-white focus:outline-none border border-white/10">
+            <button onclick="verifyAdminPassword()" class="w-full py-2.5 rounded-lg theme-bg text-slate-950 font-orbitron font-bold text-xs uppercase theme-shadow hover:brightness-110 transition-all cursor-pointer">
+              Entrar no Painel
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    function verifyAdminPassword() {
+      const pass = document.getElementById('admin-pass-input').value;
+      if (pass === DEFAULT_ADMIN_PASS) {
+        isAdminLoggedIn = true;
+        playCyberSound('toggle-on');
+        showToast("Acesso administrativo concedido!");
+        renderAdminPanel();
+      } else {
+        playCyberSound('click');
+        showToast("Senha incorreta!");
+      }
+    }
+
+    function renderAdminPanel() {
+      const keys = getStoredKeys();
+      const content = document.getElementById('modal-content');
+      
+      let keysHtml = keys.map(k => {
+        return `<div class="flex items-center justify-between glass-inner px-3 py-2 rounded-lg text-xs font-mono">
+          <span class="text-white font-bold">${k.key}</span>
+          <div class="flex items-center gap-2">
+            <span class="text-slate-400">${k.durationHours}h</span>
+            <button onclick="copySpecificKey('${k.key}')" class="text-cyan-400 hover:text-cyan-300 cursor-pointer" title="Copiar Chave"><i class="fa-solid fa-copy"></i></button>
+            <button onclick="deleteKey('${k.key}')" class="text-rose-400 hover:text-rose-300 cursor-pointer" title="Remover"><i class="fa-solid fa-trash"></i></button>
+          </div>
+        </div>`;
+      }).join('');
+
+      content.innerHTML = `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between border-b border-white/10 pb-3">
+            <h2 class="text-base font-orbitron font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-shield-halved theme-text"></i> GERENCIADOR DE CHAVES
+            </h2>
+            <button onclick="isAdminLoggedIn=false; openAdminModal()" class="text-xs text-slate-400 hover:text-white cursor-pointer">Bloquear Admin</button>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-orbitron text-slate-300 mb-1">Duração (Horas):</label>
+              <select id="new-key-duration" class="w-full px-3 py-2 rounded-lg glass-inner text-xs text-white focus:outline-none border border-white/10 bg-slate-900">
+                <option value="24">24 Horas (1 Dia)</option>
+                <option value="168">168 Horas (7 Dias)</option>
+                <option value="720">720 Horas (30 Dias)</option>
+                <option value="999999">Vitalícia</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button onclick="createNewKey()" class="w-full py-2.5 rounded-lg theme-bg text-slate-950 font-orbitron font-bold text-xs uppercase theme-shadow hover:brightness-110 transition-all cursor-pointer">
+                <i class="fa-solid fa-plus"></i> Gerar Chave
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <span class="text-xs font-orbitron text-slate-300 block mb-2">Chaves Ativas Cadastradas:</span>
+            <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+              ${keysHtml || '<p class="text-xs text-slate-500">Nenhuma chave gerada.</p>'}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function createNewKey() {
+      const hours = parseInt(document.getElementById('new-key-duration').value) || 24;
+      const keys = getStoredKeys();
+      const newKeyStr = generateRandomKey();
+
+      keys.push({
+        key: newKeyStr,
+        durationHours: hours,
+        createdAt: Date.now(),
+        isUnused: true
+      });
+
+      saveKeys(keys);
+      playCyberSound('toggle-on');
+      showToast(`Chave gerada: ${newKeyStr}`);
+      renderAdminPanel();
+    }
+
+    function deleteKey(keyStr) {
+      let keys = getStoredKeys();
+      keys = keys.filter(k => k.key !== keyStr);
+      saveKeys(keys);
+      playCyberSound('click');
+      showToast("Chave removida!");
+      renderAdminPanel();
+    }
+
+    /* ===================================================
+        1. AUDIO SYSTEM (Web Audio API)
+    =================================================== */
+    let audioEnabled = true;
+    let audioCtx = null;
+
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playCyberSound(type) {
+      if (!audioEnabled) return;
+      try {
+        const ctx = getAudioContext();
+        if (ctx.state === 'suspended') {
+          ctx.resume();
+        }
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        const now = ctx.currentTime;
+
+        if (type === 'click') {
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(800, now);
+          osc.frequency.exponentialRampToValueAtTime(400, now + 0.05);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.start(now);
+          osc.stop(now + 0.05);
+        } else if (type === 'toggle-on') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(400, now);
+          osc.frequency.exponentialRampToValueAtTime(880, now + 0.12);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        } else if (type === 'toggle-off') {
+          osc.type = 'triangle';
+          osc.frequency.setValueAtTime(600, now);
+          osc.frequency.exponentialRampToValueAtTime(250, now + 0.12);
+          gain.gain.setValueAtTime(0.1, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+          osc.start(now);
+          osc.stop(now + 0.12);
+        }
+      } catch (e) {
+        // Ignorar falhas de autoplay
+      }
+    }
+
+    function toggleAudio() {
+      audioEnabled = !audioEnabled;
+      const text = document.getElementById('audio-text');
+      const icon = document.getElementById('audio-icon');
+
+      if (audioEnabled) {
+        text.innerText = "SOM: ON";
+        icon.className = "fa-solid fa-volume-high theme-text";
+        showToast("Efeitos sonoros ativados.");
+      } else {
+        text.innerText = "SOM: OFF";
+        icon.className = "fa-solid fa-volume-xmark text-slate-500";
+        showToast("Efeitos sonoros desativados.");
+      }
+    }
+
+    /* ===================================================
+        2. TOAST SYSTEM
+    =================================================== */
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      
+      toast.className = `glass-card px-4 py-3 rounded-xl border border-cyan-400/40 text-xs font-orbitron text-white flex items-center gap-3 shadow-2xl transition-all duration-300 translate-x-10 opacity-0`;
+      toast.innerHTML = `<i class="fa-solid fa-circle-info theme-text text-base"></i><span>${message}</span>`;
+      
+      container.appendChild(toast);
+      setTimeout(() => toast.classList.remove('translate-x-10', 'opacity-0'), 20);
+
+      setTimeout(() => {
+        toast.classList.add('translate-x-10', 'opacity-0');
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    /* ===================================================
+        3. THEME & CANVAS PARTICLES
+    =================================================== */
+    function changeTheme(themeClass) {
+      document.body.className = `${themeClass} min-h-screen flex flex-col items-center justify-center p-3 md:p-6 relative bg-grid-overlay`;
+      playCyberSound('toggle-on');
+      showToast(`Tema alterado com sucesso!`);
+    }
+
+    // Particle background animation system
+    const canvas = document.getElementById('particles-canvas');
+    const ctx = canvas.getContext('2d');
+    let particlesArray = [];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class Particle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2.5 + 0.8;
+        this.speedX = (Math.random() - 0.5) * 0.6;
+        this.speedY = (Math.random() - 0.5) * 0.6;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x > canvas.width) this.x = 0;
+        if (this.x < 0) this.x = canvas.width;
+        if (this.y > canvas.height) this.y = 0;
+        if (this.y < 0) this.y = canvas.height;
+      }
+      draw() {
+        ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--primary-color').trim() || '#00f0ff';
+        ctx.globalAlpha = 0.35;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function initParticles() {
+      particlesArray = [];
+      const num = Math.floor((canvas.width * canvas.height) / 14000);
+      for (let i = 0; i < num; i++) {
+        particlesArray.push(new Particle());
+      }
+    }
+    initParticles();
+
+    function animateParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particlesArray.forEach(p => {
+        p.update();
+        p.draw();
+      });
+      requestAnimationFrame(animateParticles);
+    }
+    animateParticles();
+
+    /* ===================================================
+        4. DASHBOARD CONTROLS & MODULES
+    =================================================== */
+    function toggleCardCheck(cardEl) {
+      const checkbox = cardEl.querySelector('.opt-check');
+      checkbox.checked = !checkbox.checked;
+      updateCardState(cardEl, checkbox.checked);
+      updateOptions();
+    }
+
+    function updateCardState(cardEl, isChecked) {
+      const iconBox = cardEl.querySelector('.icon-box');
+      if (isChecked) {
+        cardEl.classList.add('active');
+        iconBox.classList.remove('text-slate-400');
+        iconBox.classList.add('theme-text');
+        playCyberSound('toggle-on');
+      } else {
+        cardEl.classList.remove('active');
+        iconBox.classList.remove('theme-text');
+        iconBox.classList.add('text-slate-400');
+        playCyberSound('toggle-off');
+      }
+    }
+
+    function updateOptions() {
+      const checkboxes = document.querySelectorAll('.opt-check');
+      let activeCount = 0;
+      checkboxes.forEach(chk => {
+        if (chk.checked) activeCount++;
+      });
+
+      const statusIndicator = document.getElementById('status-indicator');
+      const statusPing = document.getElementById('status-ping');
+      const statusText = document.getElementById('status-text');
+
+      // Sincroniza a opção Precision Response 1ms com o status do ponteiro
+      const precisionChk = document.getElementById('chk-precision-response');
+      const pointerStatus = document.getElementById('pointer-precision-status');
+      if (precisionChk.checked) {
+        pointerStatus.innerText = "DESATIVADA (RAW INPUT 1MS)";
+        pointerStatus.className = "text-emerald-400 font-orbitron";
+      } else {
+        pointerStatus.innerText = "ATIVADO (PADRÃO)";
+        pointerStatus.className = "text-rose-400 font-orbitron";
+      }
+
+      if (activeCount > 0) {
+        statusIndicator.className = "w-4 h-4 rounded-full theme-bg transition-colors";
+        statusPing.className = "absolute w-6 h-6 rounded-full theme-bg opacity-40 animate-ping";
+        statusText.innerText = `${activeCount} MÓDULO(S) ATIVO(S)`;
+        statusText.className = "text-base md:text-lg font-orbitron font-bold theme-text";
+      } else {
+        statusIndicator.className = "w-4 h-4 rounded-full bg-slate-500 transition-colors";
+        statusPing.className = "absolute w-6 h-6 rounded-full bg-slate-500/30 animate-ping";
+        statusText.innerText = "DESATIVADO";
+        statusText.className = "text-base md:text-lg font-orbitron font-bold text-slate-300";
+      }
+    }
+
+    function toggleMasterMode() {
+      const checkboxes = document.querySelectorAll('.opt-check');
+      const cards = document.querySelectorAll('.option-card');
+      
+      const allChecked = Array.from(checkboxes).every(chk => chk.checked);
+      const newState = !allChecked;
+
+      checkboxes.forEach((chk, idx) => {
+        chk.checked = newState;
+        updateCardState(cards[idx], newState);
+      });
+
+      const btnMaster = document.getElementById('btn-master');
+      btnMaster.innerText = newState ? "DESATIVAR TUDO" : "ATIVAR TUDO";
+      updateOptions();
+      playCyberSound(newState ? 'toggle-on' : 'toggle-off');
+      showToast(newState ? "Todos os módulos ativados!" : "Todos os módulos desativados.");
+    }
+
+    /* ===================================================
+        5. FINE TUNING SLIDERS & BENCHMARK
+    =================================================== */
+    function updateFineTuning() {
+      const dpi = document.getElementById('dpi-slider').value;
+      const hz = document.getElementById('hz-slider').value;
+      document.getElementById('dpi-val').innerText = dpi + " DPI";
+      document.getElementById('hz-val').innerText = hz + " Hz";
+    }
+
+    function resetSliders() {
+      document.getElementById('dpi-slider').value = 800;
+      document.getElementById('hz-slider').value = 120;
+      updateFineTuning();
+      playCyberSound('click');
+      showToast("Sensibilidade restaurada para o padrão.");
+    }
+
+    function runBenchmark() {
+      playCyberSound('toggle-on');
+      const modal = document.getElementById('custom-modal');
+      const content = document.getElementById('modal-content');
+
+      content.innerHTML = `
+        <div class="text-center py-4 space-y-3">
+          <div class="w-14 h-14 rounded-2xl flex items-center justify-center glass-inner theme-shadow mx-auto animate-spin">
+            <i class="fa-solid fa-gauge-high text-2xl theme-text"></i>
+          </div>
+          <h2 class="text-lg font-orbitron font-bold text-white">EXECUTANDO BENCHMARK...</h2>
+          <p class="text-xs text-slate-400">Analisando estabilidade de quadros, buffer de rede e input lag.</p>
+          <div class="w-full bg-slate-800 rounded-full h-2 overflow-hidden mt-4">
+            <div id="bench-progress" class="theme-bg h-full w-0 transition-all duration-700"></div>
+          </div>
+        </div>
+      `;
+      openModal();
+
+      setTimeout(() => {
+        document.getElementById('bench-progress').style.width = '65%';
+      }, 400);
+
+      setTimeout(() => {
+        document.getElementById('bench-progress').style.width = '100%';
+      }, 1100);
+
+      setTimeout(() => {
+        content.innerHTML = `
+          <div class="space-y-4 py-2">
+            <div class="text-center">
+              <div class="w-12 h-12 rounded-xl flex items-center justify-center glass-inner theme-shadow mx-auto mb-2">
+                <i class="fa-solid fa-circle-check text-2xl text-emerald-400"></i>
+              </div>
+              <h2 class="text-lg font-orbitron font-bold text-white">BENCHMARK CONCLUÍDO</h2>
+              <p class="text-xs text-emerald-400 font-semibold">Otimização máxima aplicada com sucesso!</p>
+            </div>
+
+            <div class="grid grid-cols-3 gap-2 text-center pt-2">
+              <div class="glass-inner p-3 rounded-xl">
+                <span class="text-[10px] text-slate-400 block">Estabilidade</span>
+                <span class="font-orbitron font-bold text-white text-sm">99.8%</span>
+              </div>
+              <div class="glass-inner p-3 rounded-xl">
+                <span class="text-[10px] text-slate-400 block">Latência Média</span>
+                <span class="font-orbitron font-bold theme-text text-sm">1.2 ms</span>
+              </div>
+              <div class="glass-inner p-3 rounded-xl">
+                <span class="text-[10px] text-slate-400 block">Ganho FPS</span>
+                <span class="font-orbitron font-bold text-emerald-400 text-sm">+42%</span>
+              </div>
+            </div>
+
+            <button onclick="closeModal()" class="w-full py-2.5 rounded-lg theme-bg text-slate-950 font-orbitron font-bold text-xs uppercase theme-shadow hover:brightness-110 transition-all cursor-pointer mt-2">
+              Fechar Relatório
+            </button>
+          </div>
+        `;
+        document.getElementById('metric-fps').innerText = "144";
+        document.getElementById('metric-ping').innerText = "12 ms";
+        document.getElementById('metric-ram').innerText = "94%";
+      }, 1600);
+    }
+
+    /* ===================================================
+        6. TARGET REACTION MINI-GAME (PERMANENT TARGET)
+    =================================================== */
+    let reactionStartTime = performance.now();
+
+    function resetTargetTimer() {
+      reactionStartTime = performance.now();
+    }
+
+    function clickTarget(e) {
+      e.stopPropagation();
+      const reactionTime = Math.round(performance.now() - reactionStartTime);
+      const scoreDisplay = document.getElementById('reaction-score');
+      
+      scoreDisplay.innerText = `Score: ${reactionTime}ms`;
+      playCyberSound('toggle-on');
+
+      const box = document.getElementById('target-box');
+      const circle = document.getElementById('target-circle');
+      const maxX = box.clientWidth - 45;
+      const maxY = box.clientHeight - 45;
+      const randomX = Math.max(5, Math.floor(Math.random() * maxX));
+      const randomY = Math.max(5, Math.floor(Math.random() * maxY));
+
+      circle.style.left = randomX + 'px';
+      circle.style.top = randomY + 'px';
+
+      resetTargetTimer();
+    }
+
+    /* ===================================================
+        7. MODAL UTILS & INITIALIZATION
+    =================================================== */
+    function openModal(type) {
+      const modal = document.getElementById('custom-modal');
+      const content = document.getElementById('modal-content');
+
+      if (type === 'suporte') {
+        content.innerHTML = `
+          <div class="space-y-3">
+            <h2 class="text-base font-orbitron font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-headset theme-text"></i> SUPORTE & AJUDA
+            </h2>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              O Precision HVZ Pro otimiza a camada de resposta do navegador e do hardware do dispositivo para proporcionar uma experiência de mira fluida e sem atrasos.
+            </p>
+            <div class="glass-inner p-3 rounded-xl text-xs space-y-2 text-slate-400">
+              <p>• Para obter novas chaves de acesso, consulte o administrador do sistema.</p>
+              <p>• Entre em nossa comunidade no Discord: <a href="https://discord.gg/HFRVzYBXa" target="_blank" class="theme-text underline font-bold">discord.gg/HFRVzYBXa</a></p>
+            </div>
+            <button onclick="closeModal()" class="w-full py-2.5 rounded-lg theme-bg text-slate-950 font-orbitron font-bold text-xs uppercase cursor-pointer">Fechar</button>
+          </div>
+        `;
+      } else if (type === 'termos') {
+        content.innerHTML = `
+          <div class="space-y-3">
+            <h2 class="text-base font-orbitron font-bold text-white flex items-center gap-2">
+              <i class="fa-solid fa-shield-cat theme-text"></i> TERMOS & PRIVACIDADE
+            </h2>
+            <p class="text-xs text-slate-300 leading-relaxed">
+              Este aplicativo opera estritamente dentro de padrões seguros de otimização de interface, simulando melhorias de estabilidade de quadros e latência local sem interferir em arquivos de terceiros.
+            </p>
+            <button onclick="closeModal()" class="w-full py-2.5 rounded-lg theme-bg text-slate-950 font-orbitron font-bold text-xs uppercase cursor-pointer">Entendido</button>
+          </div>
+        `;
+      }
+
+      modal.classList.remove('hidden');
+      setTimeout(() => modal.classList.remove('opacity-0'), 10);
+    }
+
+    function closeModal() {
+      const modal = document.getElementById('custom-modal');
+      modal.classList.add('opacity-0');
+      setTimeout(() => modal.classList.add('hidden'), 300);
+      playCyberSound('click');
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      checkActiveSession();
+    });
+  </script>
+</body>
+</html>
